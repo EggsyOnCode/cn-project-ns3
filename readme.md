@@ -4,7 +4,7 @@ The current working version is the test.cc file; which shows 50 nodes and packet
 
 # Installing ns3
 
-[https://www.youtube.com/watch?v=crIXDeRL3tE](youtube Link)
+[youtube Link](https://www.youtube.com/watch?v=crIXDeRL3tE)
 
 # Running the CPP file and Viewing the Simulation
 
