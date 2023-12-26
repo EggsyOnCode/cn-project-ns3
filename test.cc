@@ -47,17 +47,16 @@ int main() {
     anim.SetConstantPosition(nodes.Get(49), 100.0, 100.0); // Set position for node 49
 
     // Add Mobility Models (ConstantPositionMobilityModel)
-    // MobilityHelper mobility;
-    // Ptr<GridPositionAllocator> positionAlloc = CreateObject<GridPositionAllocator>();
-    // positionAlloc->SetMinX(0);
-    // positionAlloc->SetMinY(0);
-    // positionAlloc->SetDeltaX(5);
-    // positionAlloc->SetDeltaY(5);
-    // positionAlloc->SetLayoutType(GridPositionAllocator::ROW_FIRST);
+    MobilityHelper mobility;
+    Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator>();
 
-    // mobility.SetPositionAllocator(positionAlloc);
-    // mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
-    // mobility.Install(nodes);
+    for (uint32_t i = 0; i < nodes.GetN(); ++i) {
+        positionAlloc->Add(Vector(i * 5, i * 5, 0)); // Adjust positions for nodes
+    }
+
+    mobility.SetPositionAllocator(positionAlloc);
+    mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
+    mobility.Install(nodes);
 
     // Simulate TCP communication between nodes 0 and 20
     Ptr<Node> sender = nodes.Get(0);
