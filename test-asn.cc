@@ -7,8 +7,25 @@
 #include "ns3/point-to-point-helper.h"
 #include "ns3/netanim-module.h" // Include NetAnim
 #include "ns3/mobility-module.h" // Include Mobility
+#include "ns3/node-container.h"
+#include <iostream>
+
 
 using namespace ns3;
+
+NetDeviceContainer GetDevicesInRange(NetDeviceContainer& devices, uint32_t startIndex, uint32_t endIndex) {
+    // Create a temporary container to hold the devices in the specified range
+    NetDeviceContainer tempDevices;
+
+    // Iterate through the devices and add those within the range to the temporary container
+    for (uint32_t i = startIndex; i <= endIndex; ++i) {
+        tempDevices.Add(devices.Get(i));
+    }
+
+    // Return the temporary container containing the devices in the specified range
+    return tempDevices;
+}
+
 
 int main() {
     // Initialize NS-3 environment
@@ -62,123 +79,91 @@ int main() {
     // Configure interfaces and assign IP addresses for AS1
     Ipv4AddressHelper address;
     address.SetBase("10.1.1.0", "255.255.255.0");
-    NetDeviceContainer as1Devices = p2p.Install(as1);
+    NetDeviceContainer as1Devices = GetDevicesInRange(devices, 0,9);
     Ipv4InterfaceContainer as1Interfaces = address.Assign(as1Devices);
 
         // Configure interfaces and assign IP addresses for AS2
     Ipv4AddressHelper address2;
     address2.SetBase("10.2.1.0", "255.255.255.0");
-    NetDeviceContainer as2Devices = p2p.Install(as2);
+    NetDeviceContainer as2Devices = GetDevicesInRange(devices, 10,19);
     Ipv4InterfaceContainer as2Interfaces = address2.Assign(as2Devices);
 
     // Configure interfaces and assign IP addresses for AS3
     Ipv4AddressHelper address3;
     address3.SetBase("10.3.1.0", "255.255.255.0");
-    NetDeviceContainer as3Devices = p2p.Install(as3);
+    NetDeviceContainer as3Devices = GetDevicesInRange(devices, 20,29);
+
     Ipv4InterfaceContainer as3Interfaces = address3.Assign(as3Devices);
 
     // Configure interfaces and assign IP addresses for AS4
     Ipv4AddressHelper address4;
     address4.SetBase("10.4.1.0", "255.255.255.0");
-    NetDeviceContainer as4Devices = p2p.Install(as4);
+    NetDeviceContainer as4Devices = GetDevicesInRange(devices, 30,39);
+
     Ipv4InterfaceContainer as4Interfaces = address4.Assign(as4Devices);
     
     // Configure interfaces and assign IP addresses for AS5
     Ipv4AddressHelper address5;
     address5.SetBase("10.5.1.0", "255.255.255.0");
-    NetDeviceContainer as5Devices = p2p.Install(as5);
+    //is this func gonna connect all the devices inside an arbritrary ASN??
+    NetDeviceContainer as5Devices = GetDevicesInRange(devices, 40,49);
+    
     Ipv4InterfaceContainer as5Interfaces = address5.Assign(as5Devices);
 
 
-    // Connect border routers according to specified topology
-    NodeContainer as1as2Link = NodeContainer(as1Border, as2Border);
-    // p2p.Install(as1as2Link);
-
-    NodeContainer as1as3Link = NodeContainer(as1Border, as3Border);
-    // p2p.Install(as1as3Link);
-
-    NodeContainer as1as4Link = NodeContainer(as1Border, as4Border);
-    // p2p.Install(as1as4Link);
-
-    NodeContainer as1as5Link = NodeContainer(as1Border, as5Border);
-    // p2p.Install(as1as5Link);
-
-    // AS2 connections
-    NodeContainer as2as3Link = NodeContainer(as2Border, as3Border);
-    // p2p.Install(as2as3Link);
-
-    NodeContainer as2as4Link = NodeContainer(as2Border, as4Border);
-    // p2p.Install(as2as4Link);
-
-    // AS3 connections
-    NodeContainer as3as4Link = NodeContainer(as3Border, as4Border);
-    // p2p.Install(as3as4Link);
-
-    NodeContainer as3as5Link = NodeContainer(as3Border, as5Border);
-    // p2p.Install(as3as5Link);
-
-    // AS4 connection
-    NodeContainer as4as3Link = NodeContainer(as4Border, as3Border);  // Already created above
-
-    // AS5 connection
-    NodeContainer as5as4Link = NodeContainer(as5Border, as4Border);
-    // p2p.Install(as5as4Link);
-
-
-    // Assign IP addresses to inter-AS links
 
     // AS1 to AS2 link
     Ipv4AddressHelper addressAS1AS2;
     addressAS1AS2.SetBase("10.10.1.0", "255.255.255.0");
-    NetDeviceContainer devicesAS1AS2 = p2p.Install(as1as2Link);
+    NetDeviceContainer devicesAS1AS2 = p2p.Install(as1Border, as2Border);
     Ipv4InterfaceContainer interfacesAS1AS2 = addressAS1AS2.Assign(devicesAS1AS2);
 
     // AS1 to AS3 link
     Ipv4AddressHelper addressAS1AS3;
     addressAS1AS3.SetBase("10.10.2.0", "255.255.255.0");
-    NetDeviceContainer devicesAS1AS3 = p2p.Install(as1as3Link);
+    NetDeviceContainer devicesAS1AS3 = p2p.Install(as1Border, as3Border);
     Ipv4InterfaceContainer interfacesAS1AS3 = addressAS1AS3.Assign(devicesAS1AS3);
 
     // AS1 to AS4 link
     Ipv4AddressHelper addressAS1AS4;
     addressAS1AS4.SetBase("10.10.3.0", "255.255.255.0");
-    NetDeviceContainer devicesAS1AS4 = p2p.Install(as1as4Link);
+    NetDeviceContainer devicesAS1AS4 = p2p.Install(as1Border, as4Border);
     Ipv4InterfaceContainer interfacesAS1AS4 = addressAS1AS4.Assign(devicesAS1AS4);
 
     // AS1 to AS5 link
     Ipv4AddressHelper addressAS1AS5;
     addressAS1AS5.SetBase("10.10.4.0", "255.255.255.0");
-    NetDeviceContainer devicesAS1AS5 = p2p.Install(as1as5Link);
+    NetDeviceContainer devicesAS1AS5 = p2p.Install(as1Border, as5Border);
     Ipv4InterfaceContainer interfacesAS1AS5 = addressAS1AS5.Assign(devicesAS1AS5);
 
     // AS2 to AS3 link
     Ipv4AddressHelper addressAS2AS3;
     addressAS2AS3.SetBase("10.10.5.0", "255.255.255.0");
-    NetDeviceContainer devicesAS2AS3 = p2p.Install(as2as3Link);
+    NetDeviceContainer devicesAS2AS3 = p2p.Install(as2Border, as3Border);
     Ipv4InterfaceContainer interfacesAS2AS3 = addressAS2AS3.Assign(devicesAS2AS3);
 
     // AS2 to AS4 link
     Ipv4AddressHelper addressAS2AS4;
     addressAS2AS4.SetBase("10.10.6.0", "255.255.255.0");
-    NetDeviceContainer devicesAS2AS4 = p2p.Install(as2as4Link);
+    NetDeviceContainer devicesAS2AS4 = p2p.Install(as2Border, as4Border);
     Ipv4InterfaceContainer interfacesAS2AS4 = addressAS2AS4.Assign(devicesAS2AS4);
 
     // AS3 to AS4 link
     Ipv4AddressHelper addressAS3AS4;
     addressAS3AS4.SetBase("10.10.7.0", "255.255.255.0");
-    NetDeviceContainer devicesAS3AS4 = p2p.Install(as3as4Link);
+    NetDeviceContainer devicesAS3AS4 = p2p.Install(as3Border, as4Border);
     Ipv4InterfaceContainer interfacesAS3AS4 = addressAS3AS4.Assign(devicesAS3AS4);
 
     // AS3 to AS5 link
     Ipv4AddressHelper addressAS3AS5;
     addressAS3AS5.SetBase("10.10.8.0", "255.255.255.0");
-    NetDeviceContainer devicesAS3AS5 = p2p.Install(as3as5Link);
+    NetDeviceContainer devicesAS3AS5 = p2p.Install(as3Border, as5Border);
     Ipv4InterfaceContainer interfacesAS3AS5 = addressAS3AS5.Assign(devicesAS3AS5);
 
     // AS5 to AS4 link
     Ipv4AddressHelper addressAS5AS4;
     addressAS5AS4.SetBase("10.10.9.0", "255.255.255.0");
-    NetDeviceContainer devicesAS5AS4 = p2p.Install(as5as4Link);
+    NetDeviceContainer devicesAS5AS4 = p2p.Install(as5Border, as4Border);
     Ipv4InterfaceContainer interfacesAS5AS4 = addressAS5AS4.Assign(devicesAS5AS4);
 
 
@@ -205,14 +190,14 @@ int main() {
 
     ApplicationContainer apps = onoff.Install(sender);
     apps.Start(Seconds(1.0));
-    apps.Stop(Seconds(3.0));
+    apps.Stop(Seconds(10.0));
 
     PacketSinkHelper sinkHelper("ns3::TcpSocketFactory", InetSocketAddress(interfaces.GetAddress(20), port));
     apps = sinkHelper.Install(receiver);
     apps.Start(Seconds(0.0));
-    apps.Stop(Seconds(3.0));
+    apps.Stop(Seconds(10.0));
 
-    Simulator::Stop(Seconds(3)); // Stop the simulation after 3 seconds
+    Simulator::Stop(Seconds(10)); // Stop the simulation after 3 seconds
     Simulator::Run();
     Simulator::Destroy();
 
