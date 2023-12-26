@@ -46,17 +46,6 @@ int main() {
     anim.SetConstantPosition(nodes.Get(0), 0.0, 0.0); // Set position for node 0
     anim.SetConstantPosition(nodes.Get(49), 100.0, 100.0); // Set position for node 49
 
-    // Add Mobility Models (ConstantPositionMobilityModel)
-    MobilityHelper mobility;
-    Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator>();
-
-    for (uint32_t i = 0; i < nodes.GetN(); ++i) {
-        positionAlloc->Add(Vector(i * 5, i * 5, 0)); // Adjust positions for nodes
-    }
-
-    mobility.SetPositionAllocator(positionAlloc);
-    mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
-    mobility.Install(nodes);
 
     // Simulate TCP communication between nodes 0 and 20
     Ptr<Node> sender = nodes.Get(0);
@@ -74,14 +63,14 @@ int main() {
 
     ApplicationContainer apps = onoff.Install(sender);
     apps.Start(Seconds(1.0));
-    apps.Stop(Seconds(10.0));
+    apps.Stop(Seconds(3.0));
 
     PacketSinkHelper sinkHelper("ns3::TcpSocketFactory", InetSocketAddress(interfaces.GetAddress(20), port));
     apps = sinkHelper.Install(receiver);
     apps.Start(Seconds(0.0));
-    apps.Stop(Seconds(10.0));
+    apps.Stop(Seconds(3.0));
 
-    Simulator::Stop(Seconds(10)); // Stop the simulation after 10 seconds
+    Simulator::Stop(Seconds(3)); // Stop the simulation after 10 seconds
     Simulator::Run();
     Simulator::Destroy();
 
